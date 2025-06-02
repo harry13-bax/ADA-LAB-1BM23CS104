@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void swapDouble(double *a, double *b) {
+    double temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main() {
+    int n, capacity;
+
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    int value[n], weight[n], index[n];
+    double ratio[n];
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value and weight of item %d: ", i + 1);
+        scanf("%d %d", &value[i], &weight[i]);
+        ratio[i] = (double)value[i] / weight[i];
+        index[i] = i + 1;
+    }
+
+    printf("Enter knapsack capacity: ");
+    scanf("%d", &capacity);
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (ratio[j] < ratio[j + 1]) {
+                swap(&value[j], &value[j + 1]);
+                swap(&weight[j], &weight[j + 1]);
+                swapDouble(&ratio[j], &ratio[j + 1]);
+                swap(&index[j], &index[j + 1]);
+            }
+        }
+    }
+
+    double totalValue = 0.0;
+
+    printf("\nItems taken:\n");
+    printf("Item\tFraction\n");
+
+    for (int i = 0; i < n && capacity > 0; i++) {
+        if (weight[i] <= capacity) {
+            totalValue += value[i];
+            printf("%d\t1.00\n", index[i]);
+            capacity -= weight[i];
+        } else {
+            double frac = (double)capacity / weight[i];
+            totalValue += value[i] * frac;
+            printf("%d\t%.2f\n", index[i], frac);
+            break;
+        }
+    }
+
+    printf("\nMaximum value = %.2f\n", totalValue);
+    return 0;
+}
